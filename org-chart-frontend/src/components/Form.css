@@ -16,10 +16,14 @@
 
   }
 
+  form{
+    height: 100px;
+  }
+
   .begin-button{
     width: 100%;
     color: white;
-    background-color: #2d5ca9;
+    background-color: #4285f4;
   }
 
 }

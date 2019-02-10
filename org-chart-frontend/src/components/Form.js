@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import './Form.css';
 
 class Form extends React.Component{
@@ -15,10 +16,18 @@ class Form extends React.Component{
 			return
 		}
 		if (props.step == 1){
+			axios.post('http://localhost:3000/api/v1/members', {name: '', title: ''})
+			.then(response => {
+				
+				console.log(response)
+			})
+			.catch(error => console.log(error))
+
 			this.setState({step: props.step + 1})
 			return
 		}
 	}
+
 
 	render(){
 		const status = this.state.step
@@ -30,32 +39,20 @@ class Form extends React.Component{
 				
 			}
 			if (status == 1) {
-					content = <form>
-						<h1 className="form-title text-center">Add First Set </h1>
+					content = <div>
+						<h1 className="form-title text-center">Add First Cell </h1>
 						<div className="form-row">
 							<div className="col form-group">
-								<label for = "InputFirstName">First Name</label>
-								<input type="text" className="form-control" id = "InputFirstName" placeholder = "First Name"/>
+								<label for = "InputName">Name</label>
+								<input name="name" type="text" className="form-control" id = "InputName" placeholder = "Name"/>
 							</div>
 							<div className="col form-group">
-								<label for = "InputLastName">Last Name</label>
-								<input type="text" className="form-control" id = "InputLastName" placeholder = "Last Name"/>
+								<label for = "InputLastName">Title</label>
+								<input name="last_name" type="text" className="form-control" id = "InputTitle" placeholder = "Title"/>
 							</div>
 						</div>
-						<div className="form-row">
-							<div className="col form-group">
-								<label for = "InputEmail">Email</label>
-								<input type="email" className="form-control" id = "InputEmail" placeholder = "Email"/>
-							</div>
-						</div>
-						<div className="form-row">
-							<div className="col form-group">
-								<label for = "InputTitle">Title</label>
-								<input type="text" className="form-control" id = "InputTitle" placeholder = "Title"/>
-							</div>
-						</div>
-						<button className=" btn begin-button" onClick={() => this.changeContent(this.state)}>Begin</button>
-					</form>
+						<button type='button' className=" btn begin-button" onClick={() => this.changeContent(this.state)}>Begin</button>
+					</div>
 			}
 			if (status == 2) {
 				content = null

@@ -1,0 +1,29 @@
+
+
+
+@media (max-width: 575.98px) {
+	.map{
+		border: solid black;
+		margin-top: 25px;
+	}
+
+}
+
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+	.map{
+		border: solid black;
+		margin-top: 25px;
+	}
+ 
+}
+
+
+@media (min-width: 1200px) {
+	.map{
+		border: solid black;
+		margin-top: 25px;
+	}
+
+
+}
