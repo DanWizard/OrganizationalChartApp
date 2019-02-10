@@ -20,6 +20,7 @@ module Api::V1
 			render json: @member
 		end
 
+		#GET /api/v1/members/:id/children
 		def children
 			@members = Member.find(params[:id]).subordinates
 			render json: @members
