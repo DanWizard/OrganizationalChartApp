@@ -1,6 +1,7 @@
 module Api::V1
 	class MembersController < ApplicationController
 		# before_action :set_member, only: [:show, :update, :destroy]
+		protect_from_forgery with: :null_session
 
 		#GET /api/v1/members
 		def index
@@ -42,7 +43,7 @@ module Api::V1
 			end
 		# Never trust parameters from the scary internet, only allow the white list through.
 			def member_params
-				params.require(:member).permit(:name, :title, :manager)
+				params.require(:member).permit(:name, :title, :manager_id)
 			end
 		
 	end

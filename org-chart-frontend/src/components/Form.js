@@ -16,7 +16,7 @@ class Form extends React.Component{
 			return
 		}
 		if (props.step == 1){
-			axios.post('http://localhost:3000/api/v1/members', {name: '', title: ''})
+			axios.post('http://localhost:3000/api/v1/members',{member: {name: 'mark', title: 'CTO', manager_id: 3}})
 			.then(response => {
 				
 				console.log(response)
