@@ -206,13 +206,13 @@ class Map extends React.Component{
 			// const first_member_id = this.state.members[0].id
 			console.log(this.state.members.length)
 			if(this.state.members.length == 0){
-				console.log('set to null')
+				// console.log('set to null')
 				let temp = null
 				this.setState({manager_id: temp })
 				console.log(this.state.manager_id)
 			}
 			if (this.state.members.length >= 1) {
-				console.log('set to first')
+				// console.log('set to first')
 				let temp = this.state.members[0].id
 				this.setState({manager_id:temp})
 			}
@@ -223,9 +223,15 @@ class Map extends React.Component{
 	}
 
 	handleInput = (e) => {this.setState({[e.target.name]: e.target.value})}
-	handleUpdate = () =>{
-		const member = {name: this.state.name, title: this.state.title}
-		axios.put()
+	handleUpdate = (m) =>{
+		console.log(m)
+		let rt = m.id.toString()
+		let num = parseInt(this.state.manager_id)
+		const member = {'name': this.state.name, 'title': this.state.title, 'manager_id': num}
+		axios.put('http://localhost:3000/api/v1/members/'+rt, {"member":member}).then(response => {
+		console.log(response)
+		}).catch(error => console.log(error))
+		this.goBackUpdate()
 	} 
 
 	render(){
@@ -240,18 +246,16 @@ class Map extends React.Component{
 		const updateStatus = this.state.update
 		let addModal, updateModal, managerList, manager, children  
 
-		if(memberManager && memberManager.length >= 1){
+		if(memberManager){
 			manager = 
-			<div className= 'col'>
-				<p>Manager</p>
-				<p>{this.state.showManager.name} - {this.state.showManager.title} hello</p>
+			<div className= 'col form-group'id="mans">
+				<p>{this.state.showManager.name} - {this.state.showManager.title}</p>
 			</div>
 		}
 
-		if(!memberManager || memberManager.length == 0){
+		if(!memberManager){
 			manager = 
-			<div className= 'col'>
-				<p>Manager</p>
+			<div className= 'col form-group' id="mans">
 				<p>none</p>
 			</div>
 		}
@@ -259,8 +263,8 @@ class Map extends React.Component{
 		if(memberChildren && memberChildren.length >= 1){
 			console.log('showManager')
 			children = 
-			<div className = 'col'>
-				<p>Subordinates</p>
+			<div className = 'col form-group subs' id="subs">
+				
 				{this.state.children.map(child => {
 					return(
 						<p>{child.name} - {child.title}</p>
@@ -271,8 +275,7 @@ class Map extends React.Component{
 
 		if(!memberChildren || memberChildren.length == 0){
 			children = 
-			<div className= 'col'>
-				<p>Subordinates</p>
+			<div className= 'col form-group' id="subs">
 				<p>none</p>
 			</div>
 
@@ -307,19 +310,25 @@ class Map extends React.Component{
 						<div className="form-row">
 							<div className="col form-group">
 								<label for = "InputName">Name</label>
-								<input name="name" type="text" className="form-control" id = "InputName" placeholder = {this.state.member.name}/>
+								<input value = {this.state.name} onChange={this.handleInput} name="name" type="text" className="form-control" id = "InputName" placeholder = {this.state.member.name}/>
 							</div>
 							<div className="col form-group">
 								<label for = "InputLastName">Title</label>
-								<input name="title" type="text" className="form-control" id = "InputTitle" placeholder = {this.state.member.title}/>
+								<input name="title" value = {this.state.title} onChange={this.handleInput} type="text" className="form-control" id = "InputTitle" placeholder = {this.state.member.title}/>
 							</div>
 						</div>
 						<div className="form-row">
 								{managerList}
 						</div>
-						<div className = "row">
-							{manager}
-							{children}
+						<div className = "form-row">
+							<div className= "col form-group">
+								<label for="mans">Manager</label>
+								{manager}
+							</div>
+							<div className="col form-group">
+								<label for="subs">Subordinates</label>
+								{children}
+							</div>
 						</div>						
 						<div className='form-row'>
 							<div className = 'col form-group'>
@@ -327,7 +336,7 @@ class Map extends React.Component{
 								<button type='button' className=" btn back-button" onClick={ () => this.goBackUpdate()} >Back</button>
 							</div>
 							<div className = 'col form-group'>
-								<button type='button' className=" btn begin-button" onClick={ () => this.updateuser(this.props.info)} >Update</button>
+								<button type='button' className=" btn begin-button" onClick={ () => this.handleUpdate(this.state.member)} >Update</button>
 							</div>
 						</div>
 					</form>
@@ -394,9 +403,7 @@ class Map extends React.Component{
 			<div>
 				{updateModal}
 				{addModal}
-			    <div className="start-button">
-					<button className="btn justify-content-center" onClick={() => this.addContent(this.state)}>Add Member</button>
-				</div>
+			    <h3 className="text-center subtitle">Your Organization</h3>
 				<div className="container map">
 					<table className="table table-hover table-bordered box-shadow--6dp">
 					<thead>
@@ -420,7 +427,10 @@ class Map extends React.Component{
 						
 					</table>
 				</div>
-				
+				<div className="start-button">
+					<button className="btn justify-content-center box-shadow--6dp" onClick={() => this.addContent(this.state)}>Add Member</button>
+				</div>
+				<h3 className="text-center subtitle"> Organization Tree</h3>
 			</div>
 		)
 	}

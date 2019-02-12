@@ -32,8 +32,17 @@ module Api::V1
 			render json: @member
 		end
 			
-		#PATCH/PUT /api/v1/members
+		#PATCH/PUT /api/v1/members:id
 		def update
+			p "update"
+			p "update"
+			p "update"
+			p "update"
+			p "update"
+			p "update"
+			# @member = Member.find(params[:id]).update(name: params[:name], title: params[:title], manager_id: params[:manager_id])
+			@member = Member.find(params[:id]).update(member_params)
+			render json: @member
 		end
 
 		#DELETE /api/v1/members
