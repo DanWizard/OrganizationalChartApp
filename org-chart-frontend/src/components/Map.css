@@ -1,12 +1,58 @@
-
+@import url('https://fonts.googleapis.com/css?family=Mukta:600');
 
 
 @media (max-width: 575.98px) {
+
+	.start-button{
+    width: 100px;
+    margin: 0 auto;
+    }
+
+    .start-button button{
+    background-color: #34a853;
+    color: white;
+    }
 	.map{
-		border: solid black;
+		/*border: solid black;*/
 		margin-top: 25px;
 	}
+	.box-shadow--6dp {
+    box-shadow: 0 6px 10px 0 rgba(0, 0, 0, .14), 0 1px 18px 0 rgba(0, 0, 0, .12), 0 3px 5px -1px rgba(0, 0, 0, .2)
+    }
+    .new-member{
+    	width: 90%;
+    	text-align: center;
+    	border: none;
+    }
 
+    .fa-close{
+    	color: white;
+    }
+
+    .fa-plus{
+    	color: white
+    }
+    .user{
+    	color: white;
+    	background-color: rgb(66, 133, 244);
+    	margin-right: 2.5px;
+    }
+
+    .delete{
+    	margin-left: 2.5px;
+    	color: white;
+    	background-color: rgb(234, 67, 53);
+    }
+
+    .add{
+    	margin-left: 2.5px;
+    	color: white;
+    	background-color: #34a853
+    }
+
+    .actions{
+    	width: 33%
+    }
 }
 
 
