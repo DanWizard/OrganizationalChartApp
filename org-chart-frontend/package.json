@@ -5,6 +5,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "d3": "^5.9.1",
+    "immutability-helper": "^3.0.0",
     "orgchart": "^2.1.2",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",

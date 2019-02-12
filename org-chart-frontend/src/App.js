@@ -7,7 +7,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <h1 className="title text-center" id='logo'>Organizational Chart</h1>
+        <h1 className="title text-center" id='logo'>MyOrganization</h1>
         <Map/>
       </div>
     );

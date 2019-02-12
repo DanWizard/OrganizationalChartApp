@@ -4,7 +4,9 @@ import Form from "./Form"
 import Cell from "./Cell"
 import axios from 'axios'
 import * as d3 from "d3"
-import Modal from './Modal'
+import AddModal from './AddModal'
+import UpdateModal from './UpdateModal'
+import update from 'immutability-helper'
 
 
 class Map extends React.Component{
@@ -14,7 +16,14 @@ class Map extends React.Component{
 			members: [],
 			tree: {},
 			add: false,
-			step: false
+			update: false,
+			member: {},
+			editingMemberId: null,
+			manager: '',
+			children: {},
+			showManager: {},
+			manager_id : ''
+
 		}
 
 	}
@@ -23,7 +32,8 @@ class Map extends React.Component{
 		axios.get('http://localhost:3000/api/v1/members').then(response => {
 			this.setState({members: response.data})
 			if(response.data.length >= 1){
-				// this.structureTree()
+				const first_member_id = response.data[0].id
+				this.setState({manager_id: first_member_id})
 			}
 		})
 		.catch(error => console.log(error))
@@ -43,7 +53,9 @@ class Map extends React.Component{
 	// 	return root
 	// }
 
+
 	// findChildren(parent_){
+
 	// 		// console.log(parent_)
 	// 		let id = parent_.id.toString();
 	// 		axios.get('http://localhost:3000/api/v1/members/'+id+'/children').then(response => {
@@ -60,7 +72,7 @@ class Map extends React.Component{
 	// 			let child = response.data;
 	// 			for(let i in response.data){
 	// 				// console.log(response.data[i])
-	// 				let datum = this.findChildren(response.data[i])
+	// 				let datum = setInterval(this.findChildren(response.data[i]), 5000)
 	// 				// console.log(datum)
 	// 				set.push(datum)
 	// 			}
@@ -103,40 +115,274 @@ class Map extends React.Component{
 	// 	return seed
 	// }
 
-	changeContent(props){
-		if(props.step){
+	addContent(props){
+		if(props.add){
 			console.log('set to false')
-			props.step = false
-			this.setState({step: props.step})
+			props.add = false
+			this.setState({add: props.add})
 			return
 		}
-		if (!props.step){
+		if (!props.add){
 			console.log('set to true')
-			props.step = true
-			this.setState({step: props.step})
+			props.add = true
+			this.setState({add: props.add})
 			return
 		}
 	}
+	
 
 	addUser(props){
-		props.step = false
-		this.setState({step: props.step})
+		// console.log('enter request')
+		// console.log(this.state.manager_id)
+		let num = parseInt(this.state.manager_id)
+		const member = {'name': this.state.name, 'title': this.state.title, 'manager_id': num}
+		axios.post('http://localhost:3000/api/v1/members', {'member':member}).then(response => {
+			// console.log(response.data)
+			const members = update(this.state.members, { $splice: [[0,0, response.data]]})
+			const reset = ''
+			const recent_member_id = response.data.id
+			this.setState({name: reset})
+			this.setState({title: reset	})
+			this.setState({members: members})
+			this.setState({manager_id: recent_member_id})
+			// console.log(this.state.member)
+		})
+		.catch(error => console.log(error))
+		props.add = false
+		this.setState({add: props.add})
 		return
 	}
 
+	updateUser(props){
+		props.update = false
+		this.setState({update: props.update})
+		return
+	}
+
+	updateContent = (id) => {
+		let rt = id.toString()
+		axios.get('http://localhost:3000/api/v1/members/'+rt).then(response => {
+			let mem = update(this.state.member, {$set: response.data})
+			this.setState({member: mem})
+		})
+		.catch(error => console.log(error))
+
+		axios.get('http://localhost:3000/api/v1/members/'+rt+'/children').then(response => {
+			let c = update(this.state.children, {$set: response.data})
+			this.setState({children: c})
+		})
+
+		axios.get('http://localhost:3000/api/v1/members/'+rt+'/manager').then(response => {
+			let m = update(this.state.showManager, {$set: response.data})
+			this.setState({showManager: m})
+		})
+		.catch(error => console.log(error))
+		this.goBackUpdate()
+	}
+
+	goBackUpdate(){
+		if(this.state.update){
+			console.log('set to false')
+			let update = false
+			this.setState({update: update})
+			return
+		}
+		if (!this.state.update){
+			console.log('set to true')
+			let update = true
+			this.setState({update: update})
+			return
+		}
+	}
+
+	deleteMember = (id) => {
+		let rt = id.toString()
+		axios.delete('http://localhost:3000/api/v1/members/'+rt).then(response => {
+			console.log(response)
+			const memberIndex = this.state.members.findIndex(x => x.id === id)
+			const members = update(this.state.members, { $splice: [[memberIndex, 1]]})
+			this.setState({members: members})
+
+			// const first_member_id = this.state.members[0].id
+			console.log(this.state.members.length)
+			if(this.state.members.length == 0){
+				console.log('set to null')
+				let temp = null
+				this.setState({manager_id: temp })
+				console.log(this.state.manager_id)
+			}
+			if (this.state.members.length >= 1) {
+				console.log('set to first')
+				let temp = this.state.members[0].id
+				this.setState({manager_id:temp})
+			}
+			// this.setState({member_id: first_member_id})
+		})
+		.catch(error => console.log(error))
+
+	}
+
+	handleInput = (e) => {this.setState({[e.target.name]: e.target.value})}
+	handleUpdate = () =>{
+		const member = {name: this.state.name, title: this.state.title}
+		axios.put()
+	} 
 
 	render(){
-		const status = this.state.step
-		let addModal
-		console.log(status)
-		if (status){
-			console.log("show form")
-			 addModal =<Modal info = {this.state} added ={ (info) => this.addUser(info)}/>
+		// console.log(this.state.member)
+		const memberManager = this.state.showManager
+		const memberChildren = this.state.children
+		// console.log(memberManager)
+		// console.log(memberChildren)
+		const memberInfo = this.state.member
+		const amountOfMembers = this.state.members.length
+		const addStatus = this.state.add
+		const updateStatus = this.state.update
+		let addModal, updateModal, managerList, manager, children  
 
+		if(memberManager && memberManager.length >= 1){
+			manager = 
+			<div className= 'col'>
+				<p>Manager</p>
+				<p>{this.state.showManager.name} - {this.state.showManager.title} hello</p>
+			</div>
 		}
 
-		if (!status){
+		if(!memberManager || memberManager.length == 0){
+			manager = 
+			<div className= 'col'>
+				<p>Manager</p>
+				<p>none</p>
+			</div>
+		}
 
+		if(memberChildren && memberChildren.length >= 1){
+			console.log('showManager')
+			children = 
+			<div className = 'col'>
+				<p>Subordinates</p>
+				{this.state.children.map(child => {
+					return(
+						<p>{child.name} - {child.title}</p>
+					)
+				})}
+			</div>
+		}
+
+		if(!memberChildren || memberChildren.length == 0){
+			children = 
+			<div className= 'col'>
+				<p>Subordinates</p>
+				<p>none</p>
+			</div>
+
+			
+		}
+
+
+
+		if (amountOfMembers >= 1){
+			managerList = 
+			<div className="col form-group">
+				<label for = "SelectManager">Manager</label>
+				<select name ="manager_id" onChange={this.handleInput} className='form-control' id='SelectManager'>
+								{this.state.members.map(member => {
+									return(
+										<option value = {member.id}>{member.name} - {member.title}</option>
+									)
+								})}
+				</select>
+			</div>
+		}
+		if (amountOfMembers < 1) {
+			managerList = null
+		}
+		
+		if (updateStatus) {
+			updateModal = <div className='mod'>
+			<div className = 'main'>
+				<div className = 'add-mo'>
+					<form onSubmit={this.handleUpdate}>
+						<h1 className="form-title text-center">{this.state.member.name}'s Info</h1>
+						<div className="form-row">
+							<div className="col form-group">
+								<label for = "InputName">Name</label>
+								<input name="name" type="text" className="form-control" id = "InputName" placeholder = {this.state.member.name}/>
+							</div>
+							<div className="col form-group">
+								<label for = "InputLastName">Title</label>
+								<input name="title" type="text" className="form-control" id = "InputTitle" placeholder = {this.state.member.title}/>
+							</div>
+						</div>
+						<div className="form-row">
+								{managerList}
+						</div>
+						<div className = "row">
+							{manager}
+							{children}
+						</div>						
+						<div className='form-row'>
+							<div className = 'col form-group'>
+								<i className = "fa fa-caret-left"></i>
+								<button type='button' className=" btn back-button" onClick={ () => this.goBackUpdate()} >Back</button>
+							</div>
+							<div className = 'col form-group'>
+								<button type='button' className=" btn begin-button" onClick={ () => this.updateuser(this.props.info)} >Update</button>
+							</div>
+						</div>
+					</form>
+					
+				</div>
+			</div>		
+		</div>
+			// updateModal = <UpdateModal info = {this.state} updated={ (info) => this.updateUser(info)}/>
+		}
+
+		if (!updateStatus) {
+			updateModal = null
+		}
+
+
+		if (addStatus){
+			console.log("show form")
+			addModal= <div className = "mod">
+						<div className = 'main'>
+							<div className = 'add-mo'>
+							<h1 className="form-title text-center">Create Member</h1>
+							<form>
+								<div className="form-row">
+									<div className="col form-group">
+										<label for = "InputName">Name</label>
+										<input value={this.state.name} onChange={this.handleInput} name="name" type="text" className="form-control" id = "InputName" placeholder = "Name"/>
+									</div>
+									<div className="col form-group">
+										<label for = "InputLastName">Title</label>
+										<input value={this.state.title} onChange={this.handleInput} name="title" type="text" className="form-control" id = "InputTitle" placeholder = "Title"/>
+									</div>
+								</div>
+								<div className="form-row">
+									{managerList}
+								</div>
+								<div className='form-row'>
+									<div className = 'col form-group'>
+										<i className = "fa fa-caret-left"></i>
+										<button type='button' className=" btn back-button" onClick={ () => this.addContent(this.state)} >Back</button>
+									</div>
+									<div className = 'col form-group'>
+										<button type='button' className=" btn begin-button" onClick={ () => this.addUser(this.state)} >Create</button>
+									</div>
+								</div>								
+							</form>
+							<div className = "row">
+								
+								
+							</div>
+							</div>
+						</div>
+					</div>
+		}
+
+		if (!addStatus){
 			addModal = null
 		}
 
@@ -146,9 +392,10 @@ class Map extends React.Component{
 		return(
 			
 			<div>
+				{updateModal}
 				{addModal}
 			    <div className="start-button">
-					<button className="btn justify-content-center" onClick={() => this.changeContent(this.state)}>Add Member</button>
+					<button className="btn justify-content-center" onClick={() => this.addContent(this.state)}>Add Member</button>
 				</div>
 				<div className="container map">
 					<table className="table table-hover table-bordered box-shadow--6dp">
@@ -167,22 +414,7 @@ class Map extends React.Component{
 					</thead>
 						{this.state.members.map((member) => {
 						return(
-							<tr className= ''>
-								<td className='text-center'>
-								{member.name}
-								</td>
-								<td className='text-center'>
-								{member.title}
-								</td>
-								<td className='text-center'>
-									<button className='btn user'>
-									<i className='fa fa-user'></i>
-								 	</button>
-									<button className='btn delete'>
-									<i className='fa fa-close'></i>
-								 	</button>
-								</td>
-							</tr>
+							<Cell key = {member.id} member = {member} onUpdate ={ this.updateContent } onDelete={this.deleteMember}/>
 							)		
 						})}
 						

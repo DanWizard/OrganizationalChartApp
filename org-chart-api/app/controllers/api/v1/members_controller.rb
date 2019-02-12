@@ -5,7 +5,7 @@ module Api::V1
 
 		#GET /api/v1/members
 		def index
-			@members = Member.all
+			@members = Member.order("created_at DESC")
 			render json: @members
 		end
 
@@ -26,6 +26,11 @@ module Api::V1
 			@members = Member.find(params[:id]).subordinates
 			render json: @members
 		end
+
+		def manager
+			@member = Member.find(params[:id]).manager
+			render json: @member
+		end
 			
 		#PATCH/PUT /api/v1/members
 		def update
@@ -33,6 +38,33 @@ module Api::V1
 
 		#DELETE /api/v1/members
 		def destroy
+			@member = Member.find(params[:id])
+			@all = Member.all
+			id = params[:id]
+			num = id.to_i
+			p id
+			p num
+			p @all
+			@all.each do |e|
+				p"yo"
+				p"yo"
+				p"yo"
+				p"yo"
+				if e.manager_id == num
+					p 'searching'
+					p 'searching'
+					p 'searching'
+					p 'searching'
+					p 'searching'
+					Member.find(e.id).update(manager_id: nil)
+					
+				end
+			end
+			if @member.destroy
+				head :no_content, status: :ok
+			else
+				render json @member.errors, status: :unprocessible_entity
+			end
 		end
 
 
