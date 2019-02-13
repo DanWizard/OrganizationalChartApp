@@ -1,12 +1,9 @@
 import React from 'react';
 import './Map.css';
-import Form from "./Form"
 import Cell from "./Cell"
 import axios from 'axios'
-import * as d3 from "d3"
-import AddModal from './AddModal'
-import UpdateModal from './UpdateModal'
 import update from 'immutability-helper'
+import Tree from './Tree'
 
 
 class Map extends React.Component{
@@ -14,7 +11,8 @@ class Map extends React.Component{
 		super(props)
 		this.state = {
 			members: [],
-			tree: {},
+			initialTree: {},
+			tree:'hello',
 			add: false,
 			member: {},
 			editingMemberId: null,
@@ -48,83 +46,20 @@ class Map extends React.Component{
 			}
 		})
 		.catch(error => console.log(error))
-
+		axios.get('http://localhost:3000/api/v1/tree').then(response => {
+			// console.log(response)
+			let tree_stuff = update(this.state.initialTree, {$set: response.data})
+			this.setState({initialTree: tree_stuff})
+			console.log("this is tree", this.state.initialTree)
+			this.structureData(this.state.initialTree)
+		}).catch(error => console.log(error))
+		console.log("this is the tree", this.state.tree)
 	}
 	
-
-	// findRoot(){
-	// 	let data = this.state.members 
-	// 	let root
-	// 	for (var i = data.length - 1; i >= 0; i--) {
-	// 		if(data[i].manager_id == null){
-	// 			root = data[i]
-	// 		}
-	// 	}
-	// 	// console.log(root)
-	// 	return root
-	// }
-
-
-	// findChildren(parent_){
-
-	// 		// console.log(parent_)
-	// 		let id = parent_.id.toString();
-	// 		axios.get('http://localhost:3000/api/v1/members/'+id+'/children').then(response => {
-	// 			// console.log('enter')
-	// 			if (response.data.length >= 1){
-	// 			let treeObj = {
-	// 				'name' : '',
-	// 				'children': []
-	// 			};
-	// 			treeObj['name'] = parent_.name;
-	// 			let set = [];
-	// 			// console.log(treeObj);
-
-	// 			let child = response.data;
-	// 			for(let i in response.data){
-	// 				// console.log(response.data[i])
-	// 				let datum = setInterval(this.findChildren(response.data[i]), 5000)
-	// 				// console.log(datum)
-	// 				set.push(datum)
-	// 			}
-	// 			// child.map((person) =>{(
-	// 			// 		// let datum = this.findChildren(person)
-	// 			// 		// console.log(datum)
-	// 			// 		// set.push(datum)
-	// 			// 		set.push(this.findChildren(person))
-	// 			// 	)
-	// 			// });
-	// 			// console.log(set);
-	// 			treeObj['children'] = set;
- //    			console.log("with children", treeObj);
- //    			return treeObj;
- //    		}
- //    		else{
- //    			let treeObj = {
- //    				'name': ''
- //    			};
- //    			treeObj['name'] = parent_['name'];
- //    			console.log("without children", treeObj)
- //    			return treeObj;
- //    		}
-				
-	// 		})
-	// 		.catch(error => console.log(error))
- //    }
-
-
-	// structureTree(){
-		
-	// 	let start = this.findRoot()
-	// 	this.setState({tree: start})
-	// 	let seed = this.findChildren(this.state.tree)
-	// 	// let sapling = this.sproutTree(seed)
-	// 	// let sapling = this.changeFormat(l)
-	// 	// console.log("sap result", sapling)
-	// 	console.log("Tree Results", seed)
-	// 	this.setState({tree: seed})
-	// 	return seed
-	// }
+	structureData(treeData){
+		this.setState({tree:treeData})
+		console.log("got struc", this.state.tree)
+	}
 
 	addContent(props){
 		const reset = ''
@@ -133,7 +68,7 @@ class Map extends React.Component{
 			// console.log('set to null')
 			let temp = null
 			this.setState({manager_id: temp })
-			console.log(this.state.manager_id)
+			// console.log(this.state.manager_id)
 		}
 		if (this.state.members.length >= 1) {
 			// console.log('set to first')
@@ -141,13 +76,13 @@ class Map extends React.Component{
 			this.setState({manager_id:temp})
 			}
 		if(props.add){
-			console.log('set to false')
+			// console.log('set to false')
 			props.add = false
 			this.setState({add: props.add})
 			return
 		}
 		if (!props.add){
-			console.log('set to true')
+			// console.log('set to true')
 			props.add = true
 			this.setState({add: props.add})
 			return
@@ -189,12 +124,12 @@ class Map extends React.Component{
 		axios.get('http://localhost:3000/api/v1/members/'+rt).then(response => {
 			let mem = update(this.state.member, {$set: response.data})
 			let manager = response.data.manager_id
-			console.log(manager) 
+			// console.log(manager) 
 			let man = update(this.state.manager_id, {$set: response.data.manager_id})
-			console.log(man)	
+			// console.log(man)	
 			this.setState({member: mem})
 			this.setState({manager_id: man})
-			console.log(this.state.manager_id)
+			// console.log(this.state.manager_id)
 
 		})
 		.catch(error => console.log(error))
@@ -210,9 +145,9 @@ class Map extends React.Component{
 		})
 		.catch(error => console.log(error))
 
-		console.log(this.state.manager_id)
-		console.log(this.state.manager_id)
-		console.log(this.state.manager_id)
+		// console.log(this.state.manager_id)
+		// console.log(this.state.manager_id)
+		// console.log(this.state.manager_id)
 		this.goBackUpdate()
 	}
 
@@ -232,13 +167,13 @@ class Map extends React.Component{
 			this.setState({manager_id:temp})
 			}
 		if(this.state.update){
-			console.log('set to false')
+			// console.log('set to false')
 			let update = false
 			this.setState({update: update})
 			return
 		}
 		if (!this.state.update){
-			console.log('set to true')
+			// console.log('set to true')
 			let update = true
 			this.setState({update: update})
 			return
@@ -248,7 +183,7 @@ class Map extends React.Component{
 	deleteMember = (id) => {
 		let rt = id.toString()
 		axios.delete('http://localhost:3000/api/v1/members/'+rt).then(response => {
-			console.log(response)
+			// console.log(response)
 			const memberIndex = this.state.members.findIndex(x => x.id === id)
 			const members = update(this.state.members, { $splice: [[memberIndex, 1]]})
 			this.setState({members: members})
@@ -296,7 +231,7 @@ class Map extends React.Component{
 	handleInputUpdate = (e) => {this.setState({[e.target.name]: e.target.value}, this.validateUpdateForm)}
 		
 	handleUpdate = (m) =>{
-		console.log(m)
+		// console.log(m)
 		let rt = m.id.toString()
 		let num = parseInt(this.state.updateMember)
 		const member = {'name': this.state.updateName, 'title': this.state.updateTitle, 'manager_id': num}
@@ -332,6 +267,7 @@ class Map extends React.Component{
 		const memberChildren = this.state.children
 		// console.log(memberManager)
 		// console.log(memberChildren)
+		const treeData = this.state.tree
 		const amountOfMembers = this.state.members.length
 		const addStatus = this.state.add
 		const updateStatus = this.state.update
@@ -352,7 +288,7 @@ class Map extends React.Component{
 		}
 
 		if(memberChildren && memberChildren.length >= 1){
-			console.log('showManager')
+			// console.log('showManager')
 			children = 
 			<div className = 'col form-group subs' id="subs">
 				
@@ -382,17 +318,27 @@ class Map extends React.Component{
 				<select name ="updateMember" onChange={this.handleInputUpdate} className='form-control' id='SelectManager'>
 					<option value='' >none</option>
 					{this.state.members.map(member => {
-						if(member.manager_id != this.state.manager_id){
-							return(
-								<option value = {member.id}>{member.name} - {member.title}</option>
-							)
-						}
-						if (!member.manager_id && member.manager_id === this.state.manager_id) {
+
+						if (!member.manager_id && member.manager_id === this.state.member.id || member.id == this.state.member.id) {
+							console.log('samam')
+							console.log('samam')
+							console.log('samam')
+							console.log('samam')
 							return(
 								<p id="hidethis"></p>
 							) 	
 						}
-						if (!member.manager_id && member.manager_id != this.state.manager_id){
+						if(member.manager_id != this.state.member.id){
+							console.log('samam')
+							console.log('samam')
+							console.log('samam')
+							console.log('s1amam')
+							return(
+								<option value = {member.id}>{member.name} - {member.title}</option>
+							)
+						}
+						
+						if (!member.manager_id && member.manager_id != this.state.member.id){
 							return(
 								<option value = {member.id}>{member.name} - {member.title}</option>
 							)
@@ -408,6 +354,8 @@ class Map extends React.Component{
 				<select name ="createMember" onChange={this.handleInputCreate} className='form-control' id='SelectManager'>
 					<option value='' >none</option>
 					{this.state.members.map(member => {
+
+
 						if(member.manager_id != this.state.manager_id){
 							return(
 								<option value = {member.id}>{member.name} - {member.title}</option>
@@ -564,6 +512,9 @@ class Map extends React.Component{
 					<button className="btn justify-content-center box-shadow--6dp" onClick={() => this.addContent(this.state)}>Add Member</button>
 				</div>
 				<h3 className="text-center subtitle"> Relationships</h3>
+				<div className row>
+					<Tree family = {treeData}/>
+				</div>
 			</div>
 		)
 	}

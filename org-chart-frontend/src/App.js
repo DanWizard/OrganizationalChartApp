@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import './App.css';
-import Form from './components/Form'
 import Map from './components/map'
 
 class App extends Component {

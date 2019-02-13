@@ -8,4 +8,5 @@ Rails.application.routes.draw do
   end
   get 'api/v1/members/:id/children' => 'api/v1/members#children'
   get 'api/v1/members/:id/manager' => 'api/v1/members#manager'
+  get 'api/v1/tree' => 'api/v1/members#tree'
 end

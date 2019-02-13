@@ -34,13 +34,6 @@ module Api::V1
 			
 		#PATCH/PUT /api/v1/members:id
 		def update
-			p "update"
-			p "update"
-			p "update"
-			p "update"
-			p "update"
-			p "update"
-			# @member = Member.find(params[:id]).update(name: params[:name], title: params[:title], manager_id: params[:manager_id])
 			@member = Member.find(params[:id])
 			@member.update(member_params)
 			render json: @member
@@ -52,29 +45,45 @@ module Api::V1
 			@all = Member.all
 			id = params[:id]
 			num = id.to_i
-			p id
-			p num
-			p @all
 			@all.each do |e|
-				p"yo"
-				p"yo"
-				p"yo"
-				p"yo"
 				if e.manager_id == num
-					p 'searching'
-					p 'searching'
-					p 'searching'
-					p 'searching'
-					p 'searching'
 					Member.find(e.id).update(manager_id: nil)
-					
 				end
 			end
 			if @member.destroy
 				head :no_content, status: :ok
 			else
-				render json @member.errors, status: :unprocessible_entity
+				render json: @member.errors, status: :unprocessible_entity
 			end
+		end
+
+		def root
+			data = Member.all
+			root = ''
+			data.each do |e|
+				if e.manager_id == nil
+					root = e 
+				end
+			end
+			return root
+		end
+
+		def structureTree(manager)
+			@subordinates = Member.find(manager.id).subordinates
+			if @subordinates.length < 1
+				treeObj = {name: manager.name}
+				return treeObj
+			else
+				treeObj = {name: manager.name, children: []}
+				@subordinates.each{ |e| treeObj[:children] << structureTree(e) }
+				return treeObj 
+			end
+		end
+
+		def tree
+			root_member = root()
+			@subordinates = structureTree(root_member)
+			render json: @subordinates
 		end
 
 

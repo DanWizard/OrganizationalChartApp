@@ -335,7 +335,7 @@
   .map{
     margin-top: 25px;
     height: 400px;
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
     padding-top: 10px;   
   }
@@ -417,7 +417,7 @@
     height: 50px;
     width: 100px;
     padding: 0px;
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;  
   }
   .subs p{

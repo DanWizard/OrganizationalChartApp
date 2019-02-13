@@ -1,0 +1,25 @@
+path{
+	fill: none;
+	stroke: #5e6786;
+	height: 5px;
+	
+}
+
+text {
+  text-shadow:
+   -1px -1px 3px white,
+   -1px  1px 3px white,
+    1px -1px 3px white,
+    1px  1px 3px white;
+  pointer-events: none;
+  font-family: 'Playfair Display', serif;
+}
+
+.col{
+  width: 100%;
+}
+
+svg{
+  display: block;
+  margin: 0 auto;
+}
