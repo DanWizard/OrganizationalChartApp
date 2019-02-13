@@ -16,13 +16,24 @@ class Map extends React.Component{
 			members: [],
 			tree: {},
 			add: false,
-			update: false,
 			member: {},
 			editingMemberId: null,
 			manager: '',
 			children: {},
 			showManager: {},
-			manager_id : ''
+			manager_id : '',
+			updateMember: {},
+			createMember: {},
+			createformValid: true,
+			updateformValid: true,
+			NameValid: true,
+			TitleValid:true,
+			formErrors: {name:'',title:''},
+			name:'',
+			title:'',
+			updateName: "",
+			updateTitle: ""
+
 
 		}
 
@@ -116,6 +127,19 @@ class Map extends React.Component{
 	// }
 
 	addContent(props){
+		const reset = ''
+		this.setState({member: reset})
+		if(this.state.members.length == 0){
+			// console.log('set to null')
+			let temp = null
+			this.setState({manager_id: temp })
+			console.log(this.state.manager_id)
+		}
+		if (this.state.members.length >= 1) {
+			// console.log('set to first')
+			let temp = this.state.members[0].id
+			this.setState({manager_id:temp})
+			}
 		if(props.add){
 			console.log('set to false')
 			props.add = false
@@ -134,7 +158,7 @@ class Map extends React.Component{
 	addUser(props){
 		// console.log('enter request')
 		// console.log(this.state.manager_id)
-		let num = parseInt(this.state.manager_id)
+		let num = parseInt(this.state.createMember)
 		const member = {'name': this.state.name, 'title': this.state.title, 'manager_id': num}
 		axios.post('http://localhost:3000/api/v1/members', {'member':member}).then(response => {
 			// console.log(response.data)
@@ -145,6 +169,7 @@ class Map extends React.Component{
 			this.setState({title: reset	})
 			this.setState({members: members})
 			this.setState({manager_id: recent_member_id})
+			this.setState({createformValid: true,})
 			// console.log(this.state.member)
 		})
 		.catch(error => console.log(error))
@@ -163,7 +188,14 @@ class Map extends React.Component{
 		let rt = id.toString()
 		axios.get('http://localhost:3000/api/v1/members/'+rt).then(response => {
 			let mem = update(this.state.member, {$set: response.data})
+			let manager = response.data.manager_id
+			console.log(manager) 
+			let man = update(this.state.manager_id, {$set: response.data.manager_id})
+			console.log(man)	
 			this.setState({member: mem})
+			this.setState({manager_id: man})
+			console.log(this.state.manager_id)
+
 		})
 		.catch(error => console.log(error))
 
@@ -177,10 +209,28 @@ class Map extends React.Component{
 			this.setState({showManager: m})
 		})
 		.catch(error => console.log(error))
+
+		console.log(this.state.manager_id)
+		console.log(this.state.manager_id)
+		console.log(this.state.manager_id)
 		this.goBackUpdate()
 	}
 
 	goBackUpdate(){
+
+		const reset = ''
+		this.setState({member: reset})
+		if(this.state.members.length == 0){
+			// console.log('set to null')
+			let temp = null
+			this.setState({manager_id: temp })
+			console.log(this.state.manager_id)
+		}
+		if (this.state.members.length >= 1) {
+			// console.log('set to first')
+			let temp = this.state.members[0].id
+			this.setState({manager_id:temp})
+			}
 		if(this.state.update){
 			console.log('set to false')
 			let update = false
@@ -222,14 +272,56 @@ class Map extends React.Component{
 
 	}
 
-	handleInput = (e) => {this.setState({[e.target.name]: e.target.value})}
+	validateCreateForm (){
+		if(this.state.name.length > 2 && this.state.title.length > 2){
+			this.setState({createformValid: false})
+		}
+		if(this.state.name.length <= 2 || this.state.title.length <= 2){
+			this.setState({createformValid: true})
+		}
+		
+	}
+
+	validateUpdateForm (){
+		if(this.state.updateName.length > 2 && this.state.updateTitle.length > 2){
+			this.setState({updateformValid: false})
+		}
+		if(this.state.updateName.length <= 2 || this.state.updateTitle.length <= 2){
+			this.setState({updateformValid: true})
+		}
+		
+	}
+
+	handleInputCreate = (e) => {this.setState({[e.target.name]: e.target.value}, this.validateCreateForm)}
+	handleInputUpdate = (e) => {this.setState({[e.target.name]: e.target.value}, this.validateUpdateForm)}
+		
 	handleUpdate = (m) =>{
 		console.log(m)
 		let rt = m.id.toString()
-		let num = parseInt(this.state.manager_id)
-		const member = {'name': this.state.name, 'title': this.state.title, 'manager_id': num}
+		let num = parseInt(this.state.updateMember)
+		const member = {'name': this.state.updateName, 'title': this.state.updateTitle, 'manager_id': num}
 		axios.put('http://localhost:3000/api/v1/members/'+rt, {"member":member}).then(response => {
-		console.log(response)
+			console.log(response)
+			let updated_id = response.data.id
+			const reset = ''
+			const memberIndex =this.state.members.findIndex(x=>x.id === updated_id)
+			let c = update(this.state.members, {[memberIndex]: {$set: response.data }})
+			this.setState({updateName: reset})
+			this.setState({updateTitle: reset	})
+			if(this.state.members.length == 0){
+				// console.log('set to null')
+				let temp = null
+				this.setState({manager_id: temp })
+				console.log(this.state.manager_id)
+			}
+			if (this.state.members.length >= 1) {
+				// console.log('set to first')
+				let temp = this.state.members[0].id
+				this.setState({manager_id:temp})
+			}
+			this.setState({name: reset})
+			this.setState({title: reset	})
+			this.setState({members: c})
 		}).catch(error => console.log(error))
 		this.goBackUpdate()
 	} 
@@ -240,11 +332,10 @@ class Map extends React.Component{
 		const memberChildren = this.state.children
 		// console.log(memberManager)
 		// console.log(memberChildren)
-		const memberInfo = this.state.member
 		const amountOfMembers = this.state.members.length
 		const addStatus = this.state.add
 		const updateStatus = this.state.update
-		let addModal, updateModal, managerList, manager, children  
+		let addModal, updateModal, managerListUpdate, managerListCreate, manager, children  
 
 		if(memberManager){
 			manager = 
@@ -285,20 +376,63 @@ class Map extends React.Component{
 
 
 		if (amountOfMembers >= 1){
-			managerList = 
+			managerListUpdate = 
 			<div className="col form-group">
 				<label for = "SelectManager">Manager</label>
-				<select name ="manager_id" onChange={this.handleInput} className='form-control' id='SelectManager'>
-								{this.state.members.map(member => {
-									return(
-										<option value = {member.id}>{member.name} - {member.title}</option>
-									)
-								})}
+				<select name ="updateMember" onChange={this.handleInputUpdate} className='form-control' id='SelectManager'>
+					<option value='' >none</option>
+					{this.state.members.map(member => {
+						if(member.manager_id != this.state.manager_id){
+							return(
+								<option value = {member.id}>{member.name} - {member.title}</option>
+							)
+						}
+						if (!member.manager_id && member.manager_id === this.state.manager_id) {
+							return(
+								<p id="hidethis"></p>
+							) 	
+						}
+						if (!member.manager_id && member.manager_id != this.state.manager_id){
+							return(
+								<option value = {member.id}>{member.name} - {member.title}</option>
+							)
+							
+						}
+						
+					})}
+				</select>
+			</div>
+			managerListCreate = 
+			<div className="col form-group">
+				<label for = "SelectManager">Manager</label>
+				<select name ="createMember" onChange={this.handleInputCreate} className='form-control' id='SelectManager'>
+					<option value='' >none</option>
+					{this.state.members.map(member => {
+						if(member.manager_id != this.state.manager_id){
+							return(
+								<option value = {member.id}>{member.name} - {member.title}</option>
+							)
+						}
+						if (!member.manager_id && member.manager_id === this.state.manager_id) {
+							return(
+								<p id="hidethis"></p>
+							) 	
+						}
+						if (!member.manager_id && member.manager_id != this.state.manager_id){
+							return(
+								<option value= {member.id}>{member.name} - {member.title}</option>
+							)
+							
+						}
+						
+					})}
 				</select>
 			</div>
 		}
 		if (amountOfMembers < 1) {
-			managerList = null
+			managerListUpdate = null
+			managerListCreate = null
+
 		}
 		
 		if (updateStatus) {
@@ -310,15 +444,15 @@ class Map extends React.Component{
 						<div className="form-row">
 							<div className="col form-group">
 								<label for = "InputName">Name</label>
-								<input value = {this.state.name} onChange={this.handleInput} name="name" type="text" className="form-control" id = "InputName" placeholder = {this.state.member.name}/>
+								<input  value = {this.state.updateName} onChange={this.handleInputUpdate} name="updateName" type="text" className="form-control" id = "InputName" placeholder = {this.state.member.name}/>
 							</div>
 							<div className="col form-group">
 								<label for = "InputLastName">Title</label>
-								<input name="title" value = {this.state.title} onChange={this.handleInput} type="text" className="form-control" id = "InputTitle" placeholder = {this.state.member.title}/>
+								<input name="updateTitle"  value = {this.state.updateTitle} onChange={this.handleInputUpdate} type="text" className="form-control" id = "InputTitle" placeholder = {this.state.member.title}/>
 							</div>
 						</div>
 						<div className="form-row">
-								{managerList}
+								{managerListUpdate}
 						</div>
 						<div className = "form-row">
 							<div className= "col form-group">
@@ -336,7 +470,7 @@ class Map extends React.Component{
 								<button type='button' className=" btn back-button" onClick={ () => this.goBackUpdate()} >Back</button>
 							</div>
 							<div className = 'col form-group'>
-								<button type='button' className=" btn begin-button" onClick={ () => this.handleUpdate(this.state.member)} >Update</button>
+								<button type='button' className=" btn begin-button" onClick={ () => this.handleUpdate(this.state.member)} disabled={this.state.updateformValid} >Update</button>
 							</div>
 						</div>
 					</form>
@@ -344,7 +478,6 @@ class Map extends React.Component{
 				</div>
 			</div>		
 		</div>
-			// updateModal = <UpdateModal info = {this.state} updated={ (info) => this.updateUser(info)}/>
 		}
 
 		if (!updateStatus) {
@@ -362,15 +495,15 @@ class Map extends React.Component{
 								<div className="form-row">
 									<div className="col form-group">
 										<label for = "InputName">Name</label>
-										<input value={this.state.name} onChange={this.handleInput} name="name" type="text" className="form-control" id = "InputName" placeholder = "Name"/>
+										<input value={this.state.name} onChange={this.handleInputCreate} name="name" type="text" className="form-control" id = "InputName" placeholder = "Name"/>
 									</div>
 									<div className="col form-group">
 										<label for = "InputLastName">Title</label>
-										<input value={this.state.title} onChange={this.handleInput} name="title" type="text" className="form-control" id = "InputTitle" placeholder = "Title"/>
+										<input value={this.state.title} onChange={this.handleInputCreate} name="title" type="text" className="form-control" id = "InputTitle" placeholder = "Title"/>
 									</div>
 								</div>
 								<div className="form-row">
-									{managerList}
+									{managerListCreate}
 								</div>
 								<div className='form-row'>
 									<div className = 'col form-group'>
@@ -378,7 +511,7 @@ class Map extends React.Component{
 										<button type='button' className=" btn back-button" onClick={ () => this.addContent(this.state)} >Back</button>
 									</div>
 									<div className = 'col form-group'>
-										<button type='button' className=" btn begin-button" onClick={ () => this.addUser(this.state)} >Create</button>
+										<button type='button' className=" btn begin-button" onClick={ () => this.addUser(this.state)} disabled={this.state.createformValid}>Create</button>
 									</div>
 								</div>								
 							</form>
@@ -403,7 +536,7 @@ class Map extends React.Component{
 			<div>
 				{updateModal}
 				{addModal}
-			    <h3 className="text-center subtitle">Your Organization</h3>
+			    <h3 className="text-center subtitle">Members</h3>
 				<div className="container map">
 					<table className="table table-hover table-bordered box-shadow--6dp">
 					<thead>
@@ -430,7 +563,7 @@ class Map extends React.Component{
 				<div className="start-button">
 					<button className="btn justify-content-center box-shadow--6dp" onClick={() => this.addContent(this.state)}>Add Member</button>
 				</div>
-				<h3 className="text-center subtitle"> Organization Tree</h3>
+				<h3 className="text-center subtitle"> Relationships</h3>
 			</div>
 		)
 	}

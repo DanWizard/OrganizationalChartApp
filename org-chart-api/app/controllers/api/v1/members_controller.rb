@@ -41,7 +41,8 @@ module Api::V1
 			p "update"
 			p "update"
 			# @member = Member.find(params[:id]).update(name: params[:name], title: params[:title], manager_id: params[:manager_id])
-			@member = Member.find(params[:id]).update(member_params)
+			@member = Member.find(params[:id])
+			@member.update(member_params)
 			render json: @member
 		end
 
