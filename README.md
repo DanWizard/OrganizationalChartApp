@@ -40,7 +40,7 @@ Then,
 
 **Go to localhost:3001 to see the app!**
 
-## Usage
+### Usage
 
 The application allows you to create, read, update, and delete to and from your database. The database stores:
 
@@ -54,4 +54,55 @@ There is a one-to-many self-Join on the table through the manager_id column.
 
 So one member can have one manager and one member can have many suborindates.
 
+###### Realtional Tree Chart
+
 In order to have the relationship data display correctly, once the first member is created all subsequent created members should be assigned to an existing manager in the hierarchy.
+
+###### Creating
+
+press:
+
+``
+<button>Add member</button>
+``
+
+The form modal should appear.
+
+To submit the form you will need to pass these validatoins for each input box:
+
+```
+name length > 2
+title length > 2
+```
+If you want to do display the heirachal data make sure you include who their manager is in the select box.
+
+###### Updating
+
+press:
+
+```
+
+```
+
+The form modal should appear.
+
+To submit the form you will need to pass these validatoins for each input box:
+
+```
+name length > 2
+title length > 2
+```
+If you want to do display the heirachal data make sure you include who their manager is in the select box.
+
+###### Deleting
+
+press:
+
+``
+Red X icon
+``
+
+deleting a member with subordinates will remove the chart
+
+
+
