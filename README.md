@@ -42,7 +42,15 @@ Then,
 
 ## Usage
 
-The application allows you to create, read, update, and delete to and from your database. The database stores name: string, title: string, and manager_id: integer. There is a one-to-many self-Join on the table through the manager_id column. 
+The application allows you to create, read, update, and delete to and from your database. The database stores:
+
+```
+name: string
+title: string  
+manager_id: integer 
+```
+
+There is a one-to-many self-Join on the table through the manager_id column. 
 
 So one member can have one manager and one member can have many suborindates.
 
