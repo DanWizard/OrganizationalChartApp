@@ -54,11 +54,11 @@ There is a one-to-many self-Join on the table through the manager_id column.
 
 So one member can have one manager and one member can have many suborindates.
 
-###### Realtional Tree Chart
+##### Realtional Tree Chart
 
 In order to have the relationship data display correctly, once the first member is created all subsequent created members should be assigned to an existing manager in the hierarchy.
 
-###### Creating
+##### Creating
 
 press:
 
@@ -76,7 +76,7 @@ title length > 2
 ```
 If you want to do display the heirachal data make sure you include who their manager is in the select box.
 
-###### Updating
+##### Updating
 
 press:
 
@@ -94,7 +94,7 @@ title length > 2
 ```
 If you want to do display the heirachal data make sure you include who their manager is in the select box.
 
-###### Deleting
+##### Deleting
 
 press:
 
