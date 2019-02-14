@@ -2,28 +2,30 @@ import React from 'react'
 import './Tree.css'
 import * as d3 from "d3"
 import axios from 'axios'
+import ReactDOM from 'react-dom';
 
 export default class Tree extends React.Component{
 	constructor(props){
 		super(props)
-		console.log("tree props", this.props.family)
 		this.state = {
-			tree: {}
-		}
+			tree: {},
+            height: window.innerHeight, 
+            width: window.innerWidth
+    	};
 	}
-	componentWillMount(){
-		axios.get('http://localhost:3000/api/v1/tree').then(response => {
-			// console.log(response)
-			this.setState({tree: response.data})
-			console.log("this is tree", this.state.tree)
-			this.createTree(this.state.tree)
-
-		}).catch(error => console.log(error))
-		console.log("this is the tree", this.state.tree)
+	
+	componentDidUpdate(prevProps){
+		if(prevProps.family != this.props.family)
+		this.getSVG()
+		this.createTree(this.props.family)
 	}
 
+	getSVG(){
+		// ReactDOM.unmountComponentAtNode(document.getElementById('tree_svg'));
+		d3.select("body").selectAll("svg").remove();
+	}
 	createTree(family){
-		const svg = d3.select('body').append('svg')
+		const svg = d3.select('body').append('svg').attr("id", "tree_svg")
 		
 		// const width = document.body.clientWidth
 		// const height = document.body.clientHeight
@@ -61,13 +63,13 @@ export default class Tree extends React.Component{
 				.attr('y', d=> d.x)
 				.attr('dy', '0.32em')
 		        .attr('text-anchor', d=> d.children ? 'middle' : 'start')
-		        .attr('font-size', d => 3.25 - d.depth + 'em')
+		        .attr('font-size', d => 1.5+"em")
 				.text(d => d.data.name)
 	}
 	render(){
 		return(
 			<div className= "col">
-				
+				<p className= "text-center t">only supported on desktop and tablet... for now ( ◠‿◠)</p>
 			</div>
 		)
 		

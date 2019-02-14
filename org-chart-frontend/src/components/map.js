@@ -34,7 +34,7 @@ class Map extends React.Component{
 
 
 		}
-
+		this.structureData = this.structureData.bind(this)
 	}
 
 	componentDidMount(){
@@ -46,19 +46,18 @@ class Map extends React.Component{
 			}
 		})
 		.catch(error => console.log(error))
+		this.structureData()
+	}
+	
+	structureData(){
 		axios.get('http://localhost:3000/api/v1/tree').then(response => {
 			// console.log(response)
 			let tree_stuff = update(this.state.initialTree, {$set: response.data})
 			this.setState({initialTree: tree_stuff})
 			console.log("this is tree", this.state.initialTree)
-			this.structureData(this.state.initialTree)
 		}).catch(error => console.log(error))
-		console.log("this is the tree", this.state.tree)
-	}
-	
-	structureData(treeData){
-		this.setState({tree:treeData})
-		console.log("got struc", this.state.tree)
+		// console.log("this is the tree", this.state.tree)
+		// console.log("got struc", this.state.tree)
 	}
 
 	addContent(props){
@@ -105,6 +104,7 @@ class Map extends React.Component{
 			this.setState({members: members})
 			this.setState({manager_id: recent_member_id})
 			this.setState({createformValid: true,})
+			this.structureData()
 			// console.log(this.state.member)
 		})
 		.catch(error => console.log(error))
@@ -113,11 +113,7 @@ class Map extends React.Component{
 		return
 	}
 
-	updateUser(props){
-		props.update = false
-		this.setState({update: props.update})
-		return
-	}
+
 
 	updateContent = (id) => {
 		let rt = id.toString()
@@ -187,6 +183,7 @@ class Map extends React.Component{
 			const memberIndex = this.state.members.findIndex(x => x.id === id)
 			const members = update(this.state.members, { $splice: [[memberIndex, 1]]})
 			this.setState({members: members})
+			this.structureData()
 
 			// const first_member_id = this.state.members[0].id
 			console.log(this.state.members.length)
@@ -242,7 +239,8 @@ class Map extends React.Component{
 			const memberIndex =this.state.members.findIndex(x=>x.id === updated_id)
 			let c = update(this.state.members, {[memberIndex]: {$set: response.data }})
 			this.setState({updateName: reset})
-			this.setState({updateTitle: reset	})
+			this.setState({updateTitle: reset})
+			this.structureData()
 			if(this.state.members.length == 0){
 				// console.log('set to null')
 				let temp = null
@@ -267,11 +265,26 @@ class Map extends React.Component{
 		const memberChildren = this.state.children
 		// console.log(memberManager)
 		// console.log(memberChildren)
-		const treeData = this.state.tree
+		const treeData = this.state.initialTree
+		console.log(treeData)
+		console.log(treeData)
+		console.log(treeData)
+		console.log(treeData)
+		console.log(treeData)
+		console.log(treeData)
+		console.log(treeData)
 		const amountOfMembers = this.state.members.length
 		const addStatus = this.state.add
 		const updateStatus = this.state.update
-		let addModal, updateModal, managerListUpdate, managerListCreate, manager, children  
+		let addModal, updateModal, managerListUpdate, managerListCreate, manager, children, treePass  
+
+		if(treeData == 'hello'){
+			treePass = null
+		}
+
+		if(treeData != 'hello'){
+			treePass = <Tree family = {treeData} getTree ={ () => this.structureData()}/>
+		}
 
 		if(memberManager){
 			manager = 
@@ -320,19 +333,11 @@ class Map extends React.Component{
 					{this.state.members.map(member => {
 
 						if (!member.manager_id && member.manager_id === this.state.member.id || member.id == this.state.member.id) {
-							console.log('samam')
-							console.log('samam')
-							console.log('samam')
-							console.log('samam')
 							return(
 								<p id="hidethis"></p>
 							) 	
 						}
 						if(member.manager_id != this.state.member.id){
-							console.log('samam')
-							console.log('samam')
-							console.log('samam')
-							console.log('s1amam')
 							return(
 								<option value = {member.id}>{member.name} - {member.title}</option>
 							)
@@ -511,9 +516,9 @@ class Map extends React.Component{
 				<div className="start-button">
 					<button className="btn justify-content-center box-shadow--6dp" onClick={() => this.addContent(this.state)}>Add Member</button>
 				</div>
-				<h3 className="text-center subtitle"> Relationships</h3>
+				<h3 className="text-center subtitle relationships"> Relationships</h3>
 				<div className row>
-					<Tree family = {treeData}/>
+					{treePass}
 				</div>
 			</div>
 		)

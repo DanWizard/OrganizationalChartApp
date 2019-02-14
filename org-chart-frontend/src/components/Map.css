@@ -139,6 +139,9 @@
   .actions{
     width: 40%;
   }
+  .relationships{
+    margin-top: 50px;
+  }
   
 
 }
@@ -219,6 +222,9 @@
     .actions{
     	width: 33%
     }
+    .relationships{
+    margin-top: 50px;
+  }
 }
 
 
@@ -324,6 +330,9 @@
   .actions{
     width: 40%;
   }
+  .relationships{
+    margin-top: 50px;
+  }
   
 
  
@@ -371,6 +380,9 @@
     margin-top: 25px;
   }
 
+  .relationships{
+    margin-top: 50px;
+  }
   .fa-caret-left{
     top: 10px;
     left: 20px;
