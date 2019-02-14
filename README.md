@@ -2,7 +2,7 @@
 
 This is a fully resoponsive, single page, React application utilizing a Ruby on Rails backend API. This application is meant to display the heiarchal realationships found in an organization.
 
-##Setup
+## Setup
 
 To build rails backend API run: 
 
