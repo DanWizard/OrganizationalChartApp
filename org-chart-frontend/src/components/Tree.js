@@ -15,20 +15,22 @@ export default class Tree extends React.Component{
 	}
 	
 	componentDidUpdate(prevProps){
-		if(prevProps.family != this.props.family)
-		this.getSVG()
+		console.log('count')
+		d3.select("body").selectAll("svg").remove();
+		console.log(typeof this.props.family)
+		if(prevProps.family != this.props.family && typeof this.props.family == 'object')
+		d3.select("body").selectAll("svg").remove();
 		this.createTree(this.props.family)
 	}
 
-	getSVG(){
-		// ReactDOM.unmountComponentAtNode(document.getElementById('tree_svg'));
-		d3.select("body").selectAll("svg").remove();
-	}
+	// getSVG(){
+	// 	// ReactDOM.unmountComponentAtNode(document.getElementById('tree_svg'));
+	// 	d3.select("body").selectAll("svg").remove();
+	// }
 	createTree(family){
 		const svg = d3.select('body').append('svg').attr("id", "tree_svg")
 		
-		// const width = document.body.clientWidth
-		// const height = document.body.clientHeight
+
 		console.log("this is what I have for fam", family)
 		const width = 500
 		const height = 500

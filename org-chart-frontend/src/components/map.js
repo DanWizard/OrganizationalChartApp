@@ -6,12 +6,13 @@ import update from 'immutability-helper'
 import Tree from './Tree'
 
 
+
 class Map extends React.Component{
 	constructor(props){
 		super(props)
 		this.state = {
 			members: [],
-			initialTree: {},
+			initialTree: '',
 			tree:'hello',
 			add: false,
 			member: {},
@@ -47,6 +48,7 @@ class Map extends React.Component{
 		})
 		.catch(error => console.log(error))
 		this.structureData()
+
 	}
 	
 	structureData(){
@@ -265,26 +267,19 @@ class Map extends React.Component{
 		const memberChildren = this.state.children
 		// console.log(memberManager)
 		// console.log(memberChildren)
-		const treeData = this.state.initialTree
-		console.log(treeData)
-		console.log(treeData)
-		console.log(treeData)
-		console.log(treeData)
-		console.log(treeData)
-		console.log(treeData)
-		console.log(treeData)
+		// const treeData = this.state.initialTree
 		const amountOfMembers = this.state.members.length
 		const addStatus = this.state.add
 		const updateStatus = this.state.update
 		let addModal, updateModal, managerListUpdate, managerListCreate, manager, children, treePass  
 
-		if(treeData == 'hello'){
-			treePass = null
-		}
+		// if(treeData == 'hello'){
+		// 	treePass = null
+		// }
 
-		if(treeData != 'hello'){
-			treePass = <Tree family = {treeData} getTree ={ () => this.structureData()}/>
-		}
+		// if(treeData != 'hello'){
+		// 	treePass = <Tree family = {this.state.initialTree} getTree ={ () => this.structureData()}/>
+		// }
 
 		if(memberManager){
 			manager = 
@@ -518,7 +513,7 @@ class Map extends React.Component{
 				</div>
 				<h3 className="text-center subtitle relationships"> Relationships</h3>
 				<div className row>
-					{treePass}
+					<Tree family = {this.state.initialTree} getTree ={ () => this.structureData()}/>
 				</div>
 			</div>
 		)
