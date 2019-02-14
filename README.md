@@ -1,8 +1,10 @@
-# Overview
+# OrganizationalChartApp
 
-This is a fully resoponsive, single page, React application utilizing a Ruby on Rails backend API. This application is meant to display the heiarchal realationships found in an organization.
+### Overview
 
-## Setup
+This is a fully resoponsive, single page, React application utilizing a Ruby on Rails backend API. This application is meant to display the heiarchal realationships found in a **single** organization.
+
+### Setup
 
 To build rails backend API run: 
 
@@ -38,4 +40,10 @@ Then,
 
 **Go to localhost:3001 to see the app!**
 
+## Usage
 
+The application allows you to create, read, update, and delete to and from your database. The database stores name: string, title: string, and manager_id: integer. There is a one-to-many self-Join on the table through the manager_id column. 
+
+So one member can have one manager and one member can have many suborindates.
+
+In order to have the relationship data display correctly, once the first member is created all subsequent created members should be assigned to an existing manager in the hierarchy.
